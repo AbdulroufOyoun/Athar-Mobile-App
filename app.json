@@ -3,33 +3,26 @@
     "name": "KnowNow",
     "slug": "KnowNow",
     "version": "1.0.0",
-
     "web": {
       "favicon": "./assets/favicon.png"
     },
-
     "experiments": {
       "tsconfigPaths": true
     },
-
     "plugins": [
-      //  "expo-video",
-      //   {
-      //     "supportsPictureInPicture": true
-      //   }
+      "expo-video"
     ],
-
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -37,7 +30,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.abdulroufoyoun.KnowNow"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9a8b2c9a-b699-42fb-a274-0320ed5b11f0"
       }
-    }
+    },
+    "owner": "abdulroufoyoun"
   }
 }

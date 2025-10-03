@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
+// import Carousel from 'react-native-snap-carousel';
 
 // export default function AdsComponent({ data }) {
 export default function AdsComponent() {
@@ -17,12 +17,13 @@ export default function AdsComponent() {
   );
 
   return (
-    <Carousel
-      data={entries}
-      renderItem={renderItem}
-      sliderWidth={Dimensions.get('window').width}
-      itemWidth={300}
-    />
+    // <Carousel
+    //   data={entries}
+    //   renderItem={renderItem}
+    //   sliderWidth={Dimensions.get('window').width}
+    //   itemWidth={300}
+    // />
+    <View></View>
   );
 }
 const styles = StyleSheet.create({

@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FlatList, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
@@ -12,11 +12,13 @@ export default function CoursePlayList() {
   const { data = [], isSubscribed, token = null }: any = route.params || {};
   useEffect(() => {
     console.log(data);
-  }, [isSubscribed]);
+  }, [data, isSubscribed]);
   const downloadPDF = async (pdfName: any) => {
     const pdfUrl = 'http://192.168.1.3:8888/api/pdf?pdf=' + pdfName;
 
-    const fileUri = FileSystem.documentDirectory + pdfName;
+    const baseDir =
+      (FileSystem as any).cacheDirectory || (FileSystem as any).documentDirectory || '';
+    const fileUri = baseDir + pdfName;
     const fileInfo = await FileSystem.getInfoAsync(fileUri);
 
     if (fileInfo.exists) {
@@ -53,7 +55,7 @@ export default function CoursePlayList() {
       <View style={styles.cardContainer}>
         <View style={{ flexDirection: 'row' }}>
           <>
-            {isSubscribed | data.is_free ? (
+            {isSubscribed || data.is_free ? (
               <>
                 <TouchableWithoutFeedback key={index + 1000} onPress={() => showVideo(data.video)}>
                   <Ionicons name="play" size={25} color="blue" />

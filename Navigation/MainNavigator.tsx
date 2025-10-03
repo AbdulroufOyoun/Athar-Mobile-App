@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { Alert, TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -129,7 +129,7 @@ export default function MainNavigator() {
       <Stack.Screen name="CoursePlayList" component={CourseNavigator} />
       <Stack.Screen name="AllCollections" component={AllCollectionsScreen} />
       <Stack.Screen name="Collection" component={CollectionNavigator} />
-      <Stack.Screen name="Pdf" component={ShowPdfScreen} />
+      {/* <Stack.Screen name="Pdf" component={ShowPdfScreen} /> */}
       <Stack.Screen name="Video" component={ShowCourseVideo} />
     </Stack.Navigator>
   );

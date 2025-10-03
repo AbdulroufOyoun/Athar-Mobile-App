@@ -77,6 +77,7 @@ export default function SignUpScreen() {
       return;
     }
     Keyboard.dismiss();
+    console.log(email);
     SignUp({
       email: email,
       name: name,
@@ -87,10 +88,12 @@ export default function SignUpScreen() {
       mobile_uuid: uid,
     })
       .then((response) => {
+        console.log(response.data);
         AsyncStorage.setItem('user', JSON.stringify(response.data.data));
         navigation.navigate('MainNavigator');
       })
       .catch((error) => {
+        console.log(error.data);
         Alert.alert('Wrong Data', error.response.data.message);
       });
   };

@@ -54,8 +54,9 @@ export default function LoginScreen() {
   const getUserData = async () => {
     try {
       const userData = (await AsyncStorage.getItem('user')) ?? null;
-
-      if (JSON.parse(userData ?? '{}') != null) {
+      console.log(userData);
+      if (userData != null) {
+        console.log(JSON.parse(userData ?? '{}'));
         navigation.navigate('MainNavigator');
       } else {
         console.log('JSON.parse(userData).token');

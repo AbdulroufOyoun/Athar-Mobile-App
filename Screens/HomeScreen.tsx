@@ -43,11 +43,9 @@ export default function HomeScreen() {
         if (parsed.token != null && parsed.token_expire_at > formattedDate) {
           setToken(parsed.token);
         }
-      } else {
-        navigation.navigate('Login');
       }
     } catch {
-      navigation.navigate('Login');
+      // ignore
     }
   };
 
