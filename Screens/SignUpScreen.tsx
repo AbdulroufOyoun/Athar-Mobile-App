@@ -1,4 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
+import * as Notifications from 'expo-notifications';
+// import messaging from '@react-native-firebase/messaging';
 import { useEffect, useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import * as Device from 'expo-device';
@@ -12,9 +14,10 @@ import {
   TouchableOpacity,
   View,
   Keyboard,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SignUp } from '../router/data';
+import { SignUp, updateFcmToken } from '../router/data';
 export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -25,7 +28,55 @@ export default function SignUpScreen() {
   const [uid, setUid] = useState<any>(null);
 
   const navigation = useNavigation<any>();
+  // const requestUserPermission = async () => {
+  //   const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  //   let finalStatus = existingStatus;
+  //   if (existingStatus !== 'granted') {
+  //     const { status } = await Notifications.requestPermissionsAsync();
+  //     finalStatus = status;
+  //   }
+  //   if (finalStatus !== 'granted') {
+  //     return;
+  //   }
+  // };
 
+  // const fcm = async (userToken: any) => {
+  //   try {
+  //     const fcm_token = await AsyncStorage.getItem('fcm_token');
+  //     if (!fcm_token) {
+  //       requestUserPermission();
+
+  //       if (Platform.OS === 'android') {
+  //         Notifications.setNotificationChannelAsync('default', {
+  //           name: 'default',
+  //           importance: Notifications.AndroidImportance.HIGH,
+  //           vibrationPattern: [0, 250, 250, 250],
+  //           lightColor: '#FF231F7C',
+  //         });
+  //       }
+  //       messaging()
+  //         .getToken()
+  //         .then((fcm_token: any) => {
+  //           AsyncStorage.setItem('fcm_token', fcm_token);
+  //           updateFcmToken(userToken, fcm_token);
+  //         });
+
+  //       messaging()
+  //         .getInitialNotification()
+  //         .then((remoteMessage: any) => {});
+
+  //       messaging().onNotificationOpenedApp((remoteMessage: any) => {});
+
+  //       messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {});
+
+  //       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+  //         Alert.alert('New FCM message!', JSON.stringify(remoteMessage));
+  //       });
+
+  //       return unsubscribe;
+  //     }
+  //   } catch (error) {}
+  // };
   useEffect(() => {
     (async () => {
       const userData = await AsyncStorage.getItem('user');
@@ -88,6 +139,7 @@ export default function SignUpScreen() {
     })
       .then((response) => {
         AsyncStorage.setItem('user', JSON.stringify(response.data.data));
+        // fcm(response.data.data.token);
         navigation.replace('MainNavigator');
       })
       .catch((error) => {

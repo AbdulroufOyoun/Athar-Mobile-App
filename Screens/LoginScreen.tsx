@@ -1,8 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
+import * as Notifications from 'expo-notifications';
+// import messaging from '@react-native-firebase/messaging';
+
 import { useEffect, useState } from 'react';
 import {
   Alert,
   Keyboard,
+  Platform,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -10,7 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Login } from '../router/data';
+import { Login, updateFcmToken } from '../router/data';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 
@@ -20,10 +25,69 @@ export default function LoginScreen() {
   const [uid, setUid] = useState<any>(null);
 
   const navigation = useNavigation<any>();
+
+  // const requestUserPermission = async () => {
+  //   const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  //   let finalStatus = existingStatus;
+  //   if (existingStatus !== 'granted') {
+  //     const { status } = await Notifications.requestPermissionsAsync();
+  //     finalStatus = status;
+  //   }
+  //   if (finalStatus !== 'granted') {
+  //     return;
+  //   }
+  // };
+
+  // const fcm = async (userToken: any) => {
+  //   try {
+  //     console.log(userToken);
+  //     const fcm_token = await AsyncStorage.getItem('fcm_token');
+  //     if (!fcm_token) {
+  //       requestUserPermission();
+  //       if (Platform.OS === 'android') {
+  //         Notifications.setNotificationChannelAsync('default', {
+  //           name: 'default',
+  //           importance: Notifications.AndroidImportance.HIGH,
+  //           vibrationPattern: [0, 250, 250, 250],
+  //           lightColor: '#FF231F7C',
+  //         });
+  //       }
+
+  //       messaging()
+  //         .getToken()
+  //         .then((fcm_token: any) => {
+  //           console.log('test');
+
+  //           console.log(fcm_token);
+  //           AsyncStorage.setItem('fcm_token', fcm_token);
+  //           updateFcmToken(userToken, fcm_token).then((_res: any) => {
+  //             navigation.navigate('MainNavigator');
+  //           });
+  //         })
+  //         .catch((error: any) => {
+  //           console.log(error);
+  //         });
+
+  //       messaging()
+  //         .getInitialNotification()
+  //         .then((remoteMessage: any) => {});
+
+  //       messaging().onNotificationOpenedApp((remoteMessage: any) => {});
+
+  //       messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {});
+
+  //       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+  //         Alert.alert('New FCM message!', JSON.stringify(remoteMessage));
+  //       });
+
+  //       return unsubscribe;
+  //     }
+  //   } catch (error) {}
+  // };
   useEffect(() => {
     getUserData();
   }, [uid]);
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email.trim()) {
       Alert.alert('Error', 'Email is required');
       return;
@@ -36,6 +100,7 @@ export default function LoginScreen() {
     Login({ email: email, password: password, mobile_uuid: uid })
       .then((response) => {
         AsyncStorage.setItem('user', JSON.stringify(response.data.data));
+        // fcm(response.data.data.token);
         navigation.navigate('MainNavigator');
       })
       .catch((error) => {
@@ -64,6 +129,8 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <StatusBar translucent barStyle="dark-content" />
+
       <Text style={styles.title}>Welcome Back!</Text>
       <TextInput
         style={styles.input}
@@ -81,11 +148,11 @@ export default function LoginScreen() {
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+      <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
         <Text style={styles.buttonText}>تسجيل الدخول</Text>
       </TouchableOpacity>
       <Text style={styles.signupText}>
-        ليس لديك حساب؟{' '}
+        ليس لديك حساب؟
         <TouchableNativeFeedback onPress={() => navigation.navigate('SingUp')}>
           <Text style={styles.signupLink}>انشاء حساب</Text>
         </TouchableNativeFeedback>

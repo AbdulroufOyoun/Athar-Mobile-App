@@ -11,6 +11,7 @@
     },
     "plugins": [
       "expo-video",
+      "expo-notifications"
     ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -31,8 +32,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "googleServicesFile":"./google-services.json",
-      "package": "com.abdulroufoyoun.KnowNow"
+      "package": "com.abdulroufoyoun.KnowNow",
+       "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true
+
     },
     "extra": {
       "eas": {

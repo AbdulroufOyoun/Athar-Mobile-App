@@ -160,6 +160,19 @@ export function logout(token: any) {
     },
   });
 }
+// FCM
+export function updateFcmToken(token: any, fcm_token: string) {
+  return axios.post(
+    url + 'update_token',
+    { fcm_token: fcm_token },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+    }
+  );
+}
 
 // Year Courses
 export function showYearCourses(
