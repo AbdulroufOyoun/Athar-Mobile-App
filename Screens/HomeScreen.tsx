@@ -10,12 +10,13 @@ import {
   View,
 } from 'react-native';
 import AdsComponent from '../Components/AdsComponents';
-import { showCollections, showCourses } from '../router/data';
+import { showCollections, showCourses, showUniversities } from '../router/data';
 import CollectionList from '../Components/CollectionList';
 import CourseCard from '../Components/CourseCard';
 
 import Loading from '../Components/loading';
 import { useNavigation } from '@react-navigation/native';
+import UniversitiesCard from 'Components/UniversitiesCard';
 const currentDate = new Date();
 
 const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
@@ -25,16 +26,27 @@ export default function HomeScreen() {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation<any>();
+  const [universities, setUniversities] = useState<any>([]);
 
   useEffect(() => {
     if (!token) {
       getUserData();
     }
     if (token) {
+      getUniversities();
       getCollections();
     }
   }, [token]);
-
+  const getUniversities = () => {
+    showUniversities(token)
+      .then((response) => {
+        setUniversities(response.data.data);
+      })
+      .catch((error: any) => {
+        // ignore
+        console.log(error.message);
+      });
+  };
   const getUserData = async () => {
     try {
       const userData = await AsyncStorage.getItem('user');
@@ -57,8 +69,9 @@ export default function HomeScreen() {
           getCourses();
           setLoading(false);
         })
-        .catch(() => {
+        .catch((error: any) => {
           // ignore
+          console.log(error.message);
         });
     }
   };
@@ -85,6 +98,24 @@ export default function HomeScreen() {
         </View>
       ) : (
         <>
+          <View>
+            <FlatList
+              data={universities}
+              renderItem={({ item }) => (
+                <UniversitiesCard
+                  name={item.name}
+                  id={item.id}
+                  navigation={navigation}
+                  token={token}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+              horizontal
+              inverted
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 8 }}
+            />
+          </View>
           <View>
             <View
               style={[

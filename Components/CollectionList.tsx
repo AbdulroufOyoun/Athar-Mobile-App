@@ -65,13 +65,16 @@ export default function CollectionList({ data, token }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 32,
+    marginBottom: 20,
   },
   header: {
     marginHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 12,
     //marginHorizontal: '5%',
     marginBottom: 20,
     marginTop: 10,

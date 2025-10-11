@@ -38,7 +38,6 @@ export default function AllCollectionsScreen() {
   const { token = null }: any = route.params || {};
   const navigation = useNavigation();
   useEffect(() => {
-    console.log(token);
     getCollections(page);
   }, [token]);
 

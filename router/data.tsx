@@ -14,6 +14,9 @@ export async function getUserData(): Promise<string | null> {
     return null;
   }
 }
+export function getUrl() {
+  return url;
+}
 
 // Auth
 export function Login(data: any) {
@@ -68,6 +71,18 @@ export function showMyCourses(token: any) {
     headers: {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + token,
+    },
+  });
+}
+
+export function ShowCoursePdf(token: any, courseIds: any) {
+  return axios.get(url + 'show_courses_pdf', {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token,
+    },
+    params: {
+      courseIds: courseIds,
     },
   });
 }
@@ -142,6 +157,60 @@ export function logout(token: any) {
     headers: {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + token,
+    },
+  });
+}
+
+// Year Courses
+export function showYearCourses(
+  token: any,
+  chapter: number,
+  year: number,
+  specialization_id: number
+) {
+  return axios.get(url + 'show_year_courses', {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token,
+    },
+    params: {
+      year: year,
+      chapter: chapter,
+      specialization_id: specialization_id,
+    },
+  });
+}
+
+// University
+export function showUniversities(token: any) {
+  return axios.get(url + 'show_universities', {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token,
+    },
+  });
+}
+
+export function showSpecialization(token: any, university_id: number) {
+  return axios.get(url + 'show_specializations', {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token,
+    },
+    params: {
+      university_id: university_id,
+    },
+  });
+}
+
+export function showSpecializationYears(token: any, specialization_id: number) {
+  return axios.get(url + 'show_years', {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token,
+    },
+    params: {
+      specialization_id: specialization_id,
     },
   });
 }

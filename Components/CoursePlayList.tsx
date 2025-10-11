@@ -1,84 +1,139 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useEffect } from 'react';
-import { FlatList, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { useState } from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
-// import { ShowPdf } from '../router/data';
+import * as FileSystem from 'expo-file-system/legacy';
+import { getUrl } from '../router/data';
+
 export default function CoursePlayList() {
   const navigation = useNavigation<any>();
   const route = useRoute();
-  // const [pdf, setPdf] = useState(null);
+  const [downloadingPdf, setDownloadingPdf] = useState<string | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
-  const { data = [], isSubscribed, token = null }: any = route.params || {};
-  useEffect(() => {
-    console.log(data);
-  }, [data, isSubscribed]);
-  const downloadPDF = async (pdfName: any) => {
-    const pdfUrl = 'http://192.168.1.3:8888/api/pdf?pdf=' + pdfName;
+  const { data = [], isSubscribed, token }: any = route.params || {};
 
-    const baseDir =
-      (FileSystem as any).cacheDirectory || (FileSystem as any).documentDirectory || '';
-    const fileUri = baseDir + pdfName;
-    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+  const downloadPDF = async (pdfName: string) => {
+    const pdfUrl = getUrl() + 'pdf/' + pdfName;
+    const fileUri = (FileSystem.documentDirectory || FileSystem.cacheDirectory) + pdfName;
 
-    if (fileInfo.exists) {
-      navigation.navigate('Pdf', {
-        pdf: fileInfo.uri,
-        token: token,
+    try {
+      // ✅ Check if already downloaded
+      const fileInfo = await FileSystem.getInfoAsync(fileUri);
+
+      if (fileInfo.exists && fileInfo.isDirectory === false) {
+        console.log('✅ Opening already downloaded PDF:', fileInfo.uri);
+
+        navigation.navigate('Pdf', {
+          pdf: fileInfo.uri,
+          token,
+        });
+        return;
+      }
+
+      // ✅ Not downloaded yet — fetch with HEAD first (optional but safe)
+      const headRes = await fetch(pdfUrl, {
+        method: 'HEAD',
+        headers: { Authorization: `Bearer ${token}` },
       });
-    } else {
-      try {
-        const { uri } = await FileSystem.downloadAsync(pdfUrl, fileUri, {
+
+      if (!headRes.ok) {
+        throw new Error('Unauthorized or file not found');
+      }
+
+      const contentType = headRes.headers.get('Content-Type');
+      if (!contentType?.includes('application/pdf')) {
+        throw new Error('Not a valid PDF file');
+      }
+
+      // ✅ Download the file
+      setDownloadingPdf(pdfName);
+      setDownloadProgress(0);
+
+      const downloadResumable = FileSystem.createDownloadResumable(
+        pdfUrl,
+        fileUri,
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-        const fileInfo = await FileSystem.getInfoAsync(uri);
+        },
+        (progress) => {
+          setDownloadProgress(progress.totalBytesWritten / progress.totalBytesExpectedToWrite);
+        }
+      );
+
+      const { uri }: any = await downloadResumable.downloadAsync();
+
+      if (uri) {
+        console.log('📄 Downloaded and saved to:', uri);
         navigation.navigate('Pdf', {
-          pdf: fileInfo.uri,
+          pdf: uri,
+          token,
         });
-      } catch (error) {
-        console.error('Download failed:', error);
+      } else {
+        throw new Error('Download failed');
       }
+    } catch (error: any) {
+      console.error('❌ Error downloading PDF:', error.message);
+      alert('Failed to load PDF: ' + error.message);
+    } finally {
+      setDownloadingPdf(null);
+      setDownloadProgress(0);
     }
   };
 
   const showVideo = (videoName: string) => {
     navigation.navigate('Video', {
-      videoName: videoName,
-      token: token,
+      videoName,
+      token,
     });
   };
 
   const ItemCard = ({ data, index }: any) => {
+    const isDownloading = downloadingPdf === data.pdf;
+    const progress = Math.round(downloadProgress * 100);
+
     return (
       <View style={styles.cardContainer}>
         <View style={{ flexDirection: 'row' }}>
-          <>
-            {isSubscribed || data.is_free ? (
-              <>
-                <TouchableWithoutFeedback key={index + 1000} onPress={() => showVideo(data.video)}>
-                  <Ionicons name="play" size={25} color="blue" />
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback key={data.id} onPress={() => downloadPDF(data.pdf)}>
-                  <MaterialCommunityIcons
-                    name="file-document"
-                    size={25}
-                    color="red"
-                    style={{ marginHorizontal: 10 }}
-                  />
-                </TouchableWithoutFeedback>
-              </>
-            ) : (
-              <TouchableWithoutFeedback key={index + 100} onPress={() => console.log('test play')}>
-                <Ionicons name="ban" size={25} color="blue" />
+          {isSubscribed || data.is_free ? (
+            <>
+              <TouchableWithoutFeedback onPress={() => showVideo(data.video)}>
+                <Ionicons name="play" size={25} color="blue" />
               </TouchableWithoutFeedback>
-            )}
-          </>
+              <TouchableWithoutFeedback onPress={() => downloadPDF(data.pdf)}>
+                <View style={styles.downloadContainer}>
+                  {isDownloading ? (
+                    <View style={styles.downloadProgress}>
+                      <ActivityIndicator size="small" color="red" />
+                      <Text style={styles.progressText}>{progress}%</Text>
+                    </View>
+                  ) : (
+                    <MaterialCommunityIcons
+                      name="file-document"
+                      size={25}
+                      color="red"
+                      style={{ marginHorizontal: 10 }}
+                    />
+                  )}
+                </View>
+              </TouchableWithoutFeedback>
+            </>
+          ) : (
+            <Ionicons name="ban" size={25} color="blue" />
+          )}
         </View>
         <View style={{ flexDirection: 'row' }}>
           <Text style={{ fontSize: 20 }}>{data.name}</Text>
-          <Text style={styles.itemIndex}> {index + 1} </Text>
+          <Text style={styles.itemIndex}>{index + 1}</Text>
         </View>
       </View>
     );
@@ -90,8 +145,6 @@ export default function CoursePlayList() {
         data={data}
         renderItem={({ item, index }) => <ItemCard data={item} index={index} />}
         keyExtractor={(item: any) => String(item.id)}
-        showsHorizontalScrollIndicator={false}
-        scrollEnabled={false}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       />
     </View>
@@ -109,17 +162,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: '2%',
     borderRadius: 20,
-    shadowColor: 'blue',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   itemIndex: {
     fontSize: 20,
-    backgroundColor: 'red',
+    width: 30,
+    backgroundColor: 'white',
     borderRadius: 100,
     marginLeft: 10,
-    color: 'white',
+    textAlign: 'center',
+  },
+  downloadContainer: {
+    marginHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  downloadProgress: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  progressText: {
+    marginLeft: 8,
+    fontSize: 12,
+    color: 'red',
+    fontWeight: 'bold',
   },
 });

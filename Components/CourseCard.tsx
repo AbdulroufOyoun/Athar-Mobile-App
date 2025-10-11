@@ -7,7 +7,6 @@ const screenHeigh = Dimensions.get('window').height;
 
 export default function CourseCard({ data }: any) {
   const navigation = useNavigation<any>();
-
   return (
     <TouchableWithoutFeedback
       onPress={() =>
@@ -20,10 +19,18 @@ export default function CourseCard({ data }: any) {
         <View>
           <Image source={{ uri: data.image }} style={styles.image} />
         </View>
-        <View style={{ paddingHorizontal: 5 }}>
+        <View style={styles.textContainer}>
           <Text style={styles.title}>{data.name}</Text>
+          <Text style={styles.doctor}>{data.doctor}</Text>
           <Text style={styles.description}>{data.description}</Text>
-          <Text style={styles.price}>{data.price} ألف</Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.university} numberOfLines={1} ellipsizeMode="tail">
+              {data.university}
+            </Text>
+            <Text style={styles.price} numberOfLines={1}>
+              {data.price} ألف
+            </Text>
+          </View>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -33,7 +40,7 @@ export default function CourseCard({ data }: any) {
 const styles = StyleSheet.create({
   container: {
     height: screenHeigh * 0.22,
-    backgroundColor: '#dbdbdb',
+    backgroundColor: 'white',
     flexDirection: 'row',
     marginHorizontal: '2%',
     borderRadius: 20,
@@ -43,7 +50,34 @@ const styles = StyleSheet.create({
   collectionTitle: {
     fontSize: 25,
   },
-  title: { textAlign: 'right', width: screenWidth * 0.5, margin: 5, fontSize: 20 },
-  description: { textAlign: 'right', width: screenWidth * 0.5, height: screenHeigh * 0.12 },
-  price: { width: screenWidth * 0.5, marginTop: 5, paddingLeft: 25, fontWeight: 'bold' },
+  textContainer: {
+    flex: 1,
+    paddingHorizontal: 5,
+  },
+  title: { textAlign: 'right', margin: 5, marginBottom: 0, fontSize: 20 },
+  doctor: {
+    textAlign: 'right',
+    fontSize: 15,
+    color: '#999',
+  },
+  description: { textAlign: 'right', height: screenHeigh * 0.11 },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  university: {
+    flex: 1,
+    textAlign: 'left',
+    fontSize: 15,
+    color: '#333',
+    marginRight: 8,
+  },
+  price: {
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
 });

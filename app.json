@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "KnowNow",
+    "name": "أَثَر",
     "slug": "KnowNow",
     "version": "1.0.0",
     "web": {
@@ -10,7 +10,7 @@
       "tsconfigPaths": true
     },
     "plugins": [
-      "expo-video"
+      "expo-video",
     ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -31,6 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile":"./google-services.json",
       "package": "com.abdulroufoyoun.KnowNow"
     },
     "extra": {

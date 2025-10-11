@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createMaterialTopTabNavigator();
 const screenHeigh = Dimensions.get('window').height;
@@ -20,7 +22,26 @@ const screenHeigh = Dimensions.get('window').height;
 export default function CourseDetailScreen() {
   const route = useRoute();
   const { item = null }: any = route.params || {};
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  const getUserData = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('user');
+      if (userData) {
+        const parsed = JSON.parse(userData);
+        setToken(parsed?.token ?? null);
+      } else {
+        setToken(null);
+      }
+    } catch {
+      setToken(null);
+    }
+  };
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -35,8 +56,14 @@ export default function CourseDetailScreen() {
                 <Text style={{ fontSize: 20, color: 'white' }}> رجوع </Text>
               </TouchableOpacity>
               <View style={{ flex: 1, justifyContent: 'center', marginTop: -70 }}>
+                <Text style={{ fontSize: 20, color: 'white', textAlign: 'right' }}>
+                  {item?.university || ''}
+                </Text>
                 <Text style={{ fontSize: 40, color: 'white', textAlign: 'right' }}>
-                  {item.name}
+                  {item?.name || ''}
+                </Text>
+                <Text style={{ fontSize: 25, color: 'white', textAlign: 'right' }}>
+                  {item?.doctor}
                 </Text>
               </View>
             </View>
@@ -44,32 +71,40 @@ export default function CourseDetailScreen() {
         </View>
       </ImageBackground>
       <View style={{ flex: 1, height: 500, backgroundColor: 'red' }}>
-        <Tab.Navigator
-          initialRouteName="CourseLicture"
-          style={{ flex: 1, backgroundColor: 'green', height: '100%' }}
-          screenOptions={{
-            tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
-            tabBarIndicatorStyle: { backgroundColor: 'blue' },
-          }}>
-          <Tab.Screen
-            name="CoursePlay"
-            options={{ tabBarLabel: 'عملي' }}
-            initialParams={{
-              data: item.practical,
-              isSubscribed: true,
-            }}
-            component={CoursePlayList}
-          />
-          <Tab.Screen
-            name="CourseLicture"
-            options={{ tabBarLabel: 'نظري' }}
-            initialParams={{
-              data: item.theoretical || [],
-              isSubscribed: true,
-            }}
-            component={CoursePlayList}
-          />
-        </Tab.Navigator>
+        {token !== null ? (
+          <Tab.Navigator
+            initialRouteName="CourseLicture"
+            style={{ flex: 1, backgroundColor: 'green', height: '100%' }}
+            screenOptions={{
+              tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
+              tabBarIndicatorStyle: { backgroundColor: 'blue' },
+            }}>
+            <Tab.Screen
+              name="CoursePlay"
+              key={`CoursePlay-${token ?? 'null'}`}
+              options={{ tabBarLabel: 'عملي' }}
+              initialParams={{
+                token: token,
+                data: item.practical,
+                isSubscribed: true,
+              }}
+              component={CoursePlayList}
+            />
+            <Tab.Screen
+              name="CourseLicture"
+              key={`CourseLicture-${token ?? 'null'}`}
+              options={{ tabBarLabel: 'نظري' }}
+              initialParams={{
+                token: token,
+                data: item.theoretical || [],
+                isSubscribed: true,
+              }}
+              component={CoursePlayList}
+            />
+          </Tab.Navigator>
+        ) : (
+          <View />
+        )}
       </View>
     </ScrollView>
   );

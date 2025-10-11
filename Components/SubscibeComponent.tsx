@@ -16,10 +16,10 @@ export default function SubscribeComponent({ updateSubscriptionStatus, route }: 
       subscribe({ collection_code: null, course_code: code, item_id: courseId }, token)
         .then((_response: any) => {
           setSubscribed(true);
-          navigation.navigate('MyCourses');
+          navigation.goBack();
         })
         .catch((error: any) => {
-          console.log(error.message);
+          console.log(error);
           setError(true);
           setCode('');
         });

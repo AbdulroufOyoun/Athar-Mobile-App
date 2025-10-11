@@ -45,7 +45,6 @@ export default function LoginScreen() {
 
   const getDeviceId = async () => {
     if (Device.osInternalBuildId) {
-      console.log('uuid=' + Device.osInternalBuildId + Device.modelName);
       return Device.osInternalBuildId + Device.modelId; // Unique hardware identifier for Android devices
     } else {
       return Device.deviceName || 'Unknown Device';
@@ -54,14 +53,10 @@ export default function LoginScreen() {
   const getUserData = async () => {
     try {
       const userData = (await AsyncStorage.getItem('user')) ?? null;
-      console.log(userData);
       if (userData != null) {
-        console.log(JSON.parse(userData ?? '{}'));
-        navigation.navigate('MainNavigator');
+        navigation.replace('MainNavigator');
       } else {
-        console.log('JSON.parse(userData).token');
         const id = await getDeviceId();
-        console.log(id);
         setUid(id);
       }
     } catch (error) {}
@@ -115,6 +110,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '90%',
+    color: 'black',
     height: 50,
     borderWidth: 1,
     borderColor: '#ccc',

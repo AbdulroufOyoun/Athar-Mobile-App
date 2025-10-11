@@ -41,8 +41,6 @@ export default function CourseNavigator() {
   const navigation = useNavigation();
   useEffect(() => {
     getUser();
-    // only on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getUser = async () => {
@@ -92,9 +90,22 @@ export default function CourseNavigator() {
                 <Feather name="chevron-left" size={28} color="white" />
                 <Text style={{ fontSize: 20, color: 'white' }}> رجوع </Text>
               </TouchableOpacity>
-              <View style={{ flex: 1, justifyContent: 'center', marginTop: -70 }}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'space-between',
+                  marginTop: -70,
+                  paddingVertical: 30,
+                  alignContent: 'space-between',
+                }}>
+                <Text style={{ fontSize: 20, color: 'white', textAlign: 'right' }}>
+                  {item?.university || ''}
+                </Text>
                 <Text style={{ fontSize: 40, color: 'white', textAlign: 'right' }}>
                   {item?.name || ''}
+                </Text>
+                <Text style={{ fontSize: 25, color: 'white', textAlign: 'right' }}>
+                  {item?.doctor}
                 </Text>
               </View>
             </View>
@@ -120,26 +131,31 @@ export default function CourseNavigator() {
               initialParams={{ courseId: data, contain: contain, token: token }}>
               {(props: any) => <SubscribeComponent {...props} />}
             </Tab.Screen>
-            <Tab.Screen
-              name="CoursePlay"
-              options={{ tabBarLabel: 'عملي' }}
-              initialParams={{
-                data: contain?.practical,
-                isSubscribed: contain?.is_subscribed,
-                token: token,
-              }}
-              component={CoursePlayList}
-            />
-            <Tab.Screen
-              name="CourseLicture"
-              options={{ tabBarLabel: 'نظري' }}
-              initialParams={{
-                data: contain?.theoretical || [],
-                isSubscribed: contain?.is_subscribed || false,
-                token: token,
-              }}
-              component={CoursePlayList}
-            />
+            {contain.practical && (
+              <Tab.Screen
+                name="CoursePlay"
+                options={{ tabBarLabel: 'عملي' }}
+                initialParams={{
+                  data: contain.practical,
+                  isSubscribed: contain?.is_subscribed,
+                  token: token,
+                }}
+                component={CoursePlayList}
+              />
+            )}
+            {contain.theoretical && (
+              <Tab.Screen
+                name="CourseLicture"
+                options={{ tabBarLabel: 'نظري' }}
+                initialParams={{
+                  data: contain.theoretical,
+                  isSubscribed: contain?.is_subscribed || false,
+                  token: token,
+                }}
+                component={CoursePlayList}
+              />
+            )}
+
             <Tab.Screen
               name="AboutCourse"
               options={{ tabBarLabel: 'عن الدورة' }}
@@ -148,13 +164,6 @@ export default function CourseNavigator() {
               }}
               component={AboutCourseScreen}
             />
-            {/* <Tab.Screen
-                            name="Pdf"
-                            component={ShowPdfScreen}
-                            screenOptions={{
-                                tabBarStyle: { display: 'none' }
-                            }}
-                        /> */}
           </Tab.Navigator>
         )}
       </View>

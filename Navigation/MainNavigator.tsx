@@ -20,6 +20,9 @@ import AllCollectionsScreen from '../Screens/AllCollectionsScreen';
 import CollectionNavigator from './CollectionNavigator';
 import ShowPdfScreen from '../Screens/ShowPdfScreen';
 import ShowCourseVideo from '../Screens/ShowCourseVideo';
+import UniversityNavigator from './UniversityNavigator';
+import AboutUsScreen from 'Screens/AboutUsScreen';
+import PrivacyScreen from 'Screens/PrivacyScreen';
 const Drawer = createDrawerNavigator();
 
 export default function MainNavigator() {
@@ -61,7 +64,6 @@ export default function MainNavigator() {
 
   const LogoutButton = () => {
     const handleLogout = () => {
-      console.log('test');
       Alert.alert(
         'تسجيل الخروج', // Title
         'هل أنت متأكد أنك تريد تسجيل الخروج؟', // Message
@@ -108,10 +110,10 @@ export default function MainNavigator() {
           component={MyCoursesNavigation}
           options={{ title: 'دوراتي' }}
         />
-        <Drawer.Screen name="About Us" component={HomeScreen} options={{ title: 'نبذة عنا' }} />
+        <Drawer.Screen name="About Us" component={AboutUsScreen} options={{ title: 'نبذة عنا' }} />
         <Drawer.Screen
           name="Privacy"
-          component={HomeScreen}
+          component={PrivacyScreen}
           options={{ title: 'سياسة الخصوصية' }}
         />
       </Drawer.Navigator>
@@ -129,8 +131,9 @@ export default function MainNavigator() {
       <Stack.Screen name="CoursePlayList" component={CourseNavigator} />
       <Stack.Screen name="AllCollections" component={AllCollectionsScreen} />
       <Stack.Screen name="Collection" component={CollectionNavigator} />
-      {/* <Stack.Screen name="Pdf" component={ShowPdfScreen} /> */}
+      <Stack.Screen name="Pdf" component={ShowPdfScreen} />
       <Stack.Screen name="Video" component={ShowCourseVideo} />
+      <Stack.Screen name="Years" component={UniversityNavigator} />
     </Stack.Navigator>
   );
 }

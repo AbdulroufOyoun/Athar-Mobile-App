@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "357120754537",
+    "project_id": "athar-59955",
+    "storage_bucket": "athar-59955.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357120754537:android:8acc25706032cfb1d9f3f8",
+        "android_client_info": {
+          "package_name": "com.abdulroufoyoun.KnowNow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3ZdpeBx5rHGJZG_TNJzstvu6EVAhsbZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

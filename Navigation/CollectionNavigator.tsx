@@ -68,7 +68,7 @@ export default function CollectionNavigator() {
     <ScrollView style={{ flex: 1 }}>
       <MyStatusBar backgroundColor="#474747" />
       <ImageBackground
-        source={{ uri: 'http://192.168.1.3:8888/Images/Courses/87494605972download.jpg' }} // Replace with your image path
+        source={{ uri: 'http://192.168.1.5:8888/Images/Courses/87494605972download.jpg' }} // Replace with your image path
         style={styles.background}>
         <View style={styles.overlay}>
           <View>
