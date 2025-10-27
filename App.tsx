@@ -4,6 +4,8 @@ import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
 import { preventScreenCaptureAsync } from 'expo-screen-capture';
+// import { allowScreenCaptureAsync } from 'expo-screen-capture';
+
 import { Dimensions, Text, View } from 'react-native';
 import LoginScreen from './Screens/LoginScreen';
 import SignUpScreen from './Screens/SignUpScreen';
@@ -14,9 +16,13 @@ const Stack = createNativeStackNavigator();
 
 const { width } = Dimensions.get('window');
 const isTablet = width >= 768;
+// const toggleScreenCapture = async () => {
+//   await allowScreenCaptureAsync();
+// };
 
 export default function App() {
   preventScreenCaptureAsync();
+  // toggleScreenCapture();
 
   return (
     <>

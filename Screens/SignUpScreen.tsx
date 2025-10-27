@@ -1,6 +1,4 @@
 import { useNavigation } from '@react-navigation/native';
-import * as Notifications from 'expo-notifications';
-// import messaging from '@react-native-firebase/messaging';
 import { useEffect, useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import * as Device from 'expo-device';
@@ -14,10 +12,10 @@ import {
   TouchableOpacity,
   View,
   Keyboard,
-  Platform,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SignUp, updateFcmToken } from '../router/data';
+import { showUniversities, SignUp, updateFcmToken } from '../router/data';
 export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -26,57 +24,10 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [uid, setUid] = useState<any>(null);
-
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation<any>();
-  // const requestUserPermission = async () => {
-  //   const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  //   let finalStatus = existingStatus;
-  //   if (existingStatus !== 'granted') {
-  //     const { status } = await Notifications.requestPermissionsAsync();
-  //     finalStatus = status;
-  //   }
-  //   if (finalStatus !== 'granted') {
-  //     return;
-  //   }
-  // };
+  const [universities, setUniversities] = useState<any>([]);
 
-  // const fcm = async (userToken: any) => {
-  //   try {
-  //     const fcm_token = await AsyncStorage.getItem('fcm_token');
-  //     if (!fcm_token) {
-  //       requestUserPermission();
-
-  //       if (Platform.OS === 'android') {
-  //         Notifications.setNotificationChannelAsync('default', {
-  //           name: 'default',
-  //           importance: Notifications.AndroidImportance.HIGH,
-  //           vibrationPattern: [0, 250, 250, 250],
-  //           lightColor: '#FF231F7C',
-  //         });
-  //       }
-  //       messaging()
-  //         .getToken()
-  //         .then((fcm_token: any) => {
-  //           AsyncStorage.setItem('fcm_token', fcm_token);
-  //           updateFcmToken(userToken, fcm_token);
-  //         });
-
-  //       messaging()
-  //         .getInitialNotification()
-  //         .then((remoteMessage: any) => {});
-
-  //       messaging().onNotificationOpenedApp((remoteMessage: any) => {});
-
-  //       messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {});
-
-  //       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-  //         Alert.alert('New FCM message!', JSON.stringify(remoteMessage));
-  //       });
-
-  //       return unsubscribe;
-  //     }
-  //   } catch (error) {}
-  // };
   useEffect(() => {
     (async () => {
       const userData = await AsyncStorage.getItem('user');
@@ -85,6 +36,7 @@ export default function SignUpScreen() {
       }
     })();
     (async () => {
+      getUniversities();
       const uid = await getDeviceId();
       setUid(uid);
     })();
@@ -97,7 +49,19 @@ export default function SignUpScreen() {
       return Device.deviceName || 'Unknown Device';
     }
   };
-
+  const getUniversities = () => {
+    showUniversities()
+      .then((response) => {
+        const formatted = response.data.data.map((uni: any) => ({
+          label: uni.name,
+          value: uni.id,
+        }));
+        setUniversities(formatted);
+      })
+      .catch((error: any) => {
+        console.log(error.message);
+      });
+  };
   const handleLogin = () => {
     if (!email.trim()) {
       Alert.alert('Error', 'Email is required');
@@ -127,6 +91,7 @@ export default function SignUpScreen() {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
+    setLoading(true);
     Keyboard.dismiss();
     SignUp({
       email: email,
@@ -139,11 +104,12 @@ export default function SignUpScreen() {
     })
       .then((response) => {
         AsyncStorage.setItem('user', JSON.stringify(response.data.data));
-        // fcm(response.data.data.token);
+        setLoading(false);
         navigation.replace('MainNavigator');
       })
       .catch((error) => {
         Alert.alert('Wrong Data', error.response.data.message);
+        setLoading(false);
       });
   };
 
@@ -182,16 +148,19 @@ export default function SignUpScreen() {
             borderWidth: 1,
             borderColor: '#ccc',
             borderRadius: 8,
+            textAlign: 'right',
             paddingHorizontal: 12,
             marginBottom: 16,
+            writingDirection: 'rtl',
             backgroundColor: '#fff',
           },
           inputAndroid: {
             width: '90%',
             color: 'black',
-
+            textAlign: 'right',
             marginStart: '5%',
             height: 50,
+            writingDirection: 'rtl',
             borderColor: '#ccc',
             borderRadius: 8,
             paddingHorizontal: 12,
@@ -199,13 +168,17 @@ export default function SignUpScreen() {
             backgroundColor: '#fff',
           },
         }}
+        textInputProps={{
+          textAlign: 'right',
+          // writingDirection: 'rtl',
+        }}
         placeholder={{
           label: 'الجامعة',
           value: null,
           color: '#aaa',
         }}
         onValueChange={(value: any) => setUniversityId(value)}
-        items={[{ label: 'دمشق', value: 1 }]}
+        items={universities}
       />
       <TextInput
         style={styles.input}
@@ -223,11 +196,19 @@ export default function SignUpScreen() {
         value={passwordConfirmation}
         onChangeText={(text) => setPasswordConfirmation(text)}
       />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>انشاء الحساب </Text>
+      <TouchableOpacity
+        style={[styles.button, loading && styles.buttonDisabled]}
+        onPress={handleLogin}
+        disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>انشاء الحساب</Text>
+        )}
       </TouchableOpacity>
+
       <Text style={styles.signupText}>
-        لديك حساب بالفعل؟{' '}
+        لديك حساب بالفعل؟
         <TouchableNativeFeedback onPress={() => navigation.navigate('Login')}>
           <Text style={styles.signupLink}>تسجيل الدخول</Text>
         </TouchableNativeFeedback>
@@ -276,11 +257,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   signupText: {
-    marginTop: 16,
+    marginTop: 17,
     color: '#555',
   },
   signupLink: {
     color: '#0066cc',
     fontWeight: 'bold',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
 });

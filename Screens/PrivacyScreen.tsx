@@ -69,7 +69,10 @@ export default function PrivacyScreen() {
       <Text style={{ textAlign: 'right', fontSize: 18, marginTop: 10 }}>
         لديك الحق في الوصول إلى بياناتك، وتصحيحها إذا كانت غير دقيقة أو غير مكتملة.
       </Text>
-
+      <Text style={{ textAlign: 'right', fontSize: 18, marginTop: 10 }}>
+        عند محاولة تسجيل الدخول من حساب معين بجهاز اخر سيتم حظر الحساب حتى يتم التواصل مع الدعم
+        التقني.
+      </Text>
       <Text style={{ textAlign: 'right', fontSize: 20, fontWeight: 'bold', marginTop: 20 }}>
         6. التواصل وتعديلات السياسة
       </Text>

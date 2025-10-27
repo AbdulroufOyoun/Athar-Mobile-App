@@ -59,15 +59,11 @@ export default function HomeScreen() {
         }
         const devicePushToken = await Notifications.getDevicePushTokenAsync();
         const fcmToken = devicePushToken.data;
-
         await AsyncStorage.setItem('fcm_token', fcmToken);
-
         updateFcmToken(token, fcmToken);
-
         Notifications.addNotificationReceivedListener((notification) => {
           Alert.alert('📩 إشعار جديد', notification.request.content.body || 'وصل إشعار جديد');
         });
-
         Notifications.addNotificationResponseReceivedListener((response) => {
           console.log('Notification tapped:', response);
         });
@@ -76,7 +72,6 @@ export default function HomeScreen() {
       console.error('Notification setup error:', error);
     }
   };
-
   useEffect(() => {
     if (!token) {
       getUserData();
@@ -87,7 +82,6 @@ export default function HomeScreen() {
       setupNotifications();
     }
   }, [token]);
-
   const getUserData = async () => {
     try {
       const userData = await AsyncStorage.getItem('user');
@@ -98,12 +92,12 @@ export default function HomeScreen() {
         }
       }
     } catch {
-      // ignore
+      navigation.navigate('Login');
     }
   };
 
   const getUniversities = () => {
-    showUniversities(token)
+    showUniversities()
       .then((response) => {
         setUniversities(response.data.data);
       })
@@ -166,27 +160,31 @@ export default function HomeScreen() {
               contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 8 }}
             />
           </View>
-          <View>
-            <View
-              style={[
-                { flexDirection: 'row', justifyContent: 'space-between' },
-                styles.discountTitle,
-              ]}>
-              <TouchableWithoutFeedback
-                onPress={() => navigation.navigate('AllCollections', { token })}>
-                <Text style={{ fontSize: 20, color: '#001A6E', marginTop: 3 }}>عرض الكل</Text>
-              </TouchableWithoutFeedback>
-              <Text style={styles.collectionTitle}>العروض</Text>
+          {collections.length <= 0 ? (
+            <></>
+          ) : (
+            <View>
+              <View
+                style={[
+                  { flexDirection: 'row', justifyContent: 'space-between' },
+                  styles.discountTitle,
+                ]}>
+                <TouchableWithoutFeedback
+                  onPress={() => navigation.navigate('AllCollections', { token })}>
+                  <Text style={{ fontSize: 20, color: '#001A6E', marginTop: 3 }}>عرض الكل</Text>
+                </TouchableWithoutFeedback>
+                <Text style={styles.collectionTitle}>العروض</Text>
+              </View>
+              <FlatList
+                data={collections}
+                renderItem={({ item }) => <CollectionList data={item} token={token} />}
+                keyExtractor={(item: any) => item.id}
+                showsHorizontalScrollIndicator={false}
+                scrollEnabled={false}
+                inverted={true}
+              />
             </View>
-            <FlatList
-              data={collections}
-              renderItem={({ item }) => <CollectionList data={item} token={token} />}
-              keyExtractor={(item: any) => item.id}
-              showsHorizontalScrollIndicator={false}
-              scrollEnabled={false}
-              inverted={true}
-            />
-          </View>
+          )}
           <View>
             <Text
               style={{

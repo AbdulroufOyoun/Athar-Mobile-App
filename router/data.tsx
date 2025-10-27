@@ -29,6 +29,14 @@ export function SignUp(data: any) {
     },
   });
 }
+export function changePassword(data: any, token: any) {
+  return axios.post(url + 'change_password', data, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token,
+    },
+  });
+}
 // Collections
 export function showCollections(token: any, page = 1, perPage = 3) {
   return axios.get(url + 'show_collections', {
@@ -53,7 +61,14 @@ export function checkSubscribeCollection(token: any, collectionId: any) {
     },
   });
 }
-
+// export function showUniversities(token: any) {
+//   return axios.get(url + 'show_user_courses', {
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Authorization: 'Bearer ' + token,
+//     },
+//   });
+// }
 // Course
 export function showCourses(token: any, page = 1) {
   return axios.get(url + 'show_courses', {
@@ -195,13 +210,8 @@ export function showYearCourses(
 }
 
 // University
-export function showUniversities(token: any) {
-  return axios.get(url + 'show_universities', {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + token,
-    },
-  });
+export function showUniversities() {
+  return axios.get(url + 'show_universities');
 }
 
 export function showSpecialization(token: any, university_id: number) {

@@ -23,6 +23,7 @@ import ShowCourseVideo from '../Screens/ShowCourseVideo';
 import UniversityNavigator from './UniversityNavigator';
 import AboutUsScreen from 'Screens/AboutUsScreen';
 import PrivacyScreen from 'Screens/PrivacyScreen';
+import ChangePasswordScreen from 'Screens/ChangePasswordScreen';
 const Drawer = createDrawerNavigator();
 
 export default function MainNavigator() {
@@ -109,6 +110,11 @@ export default function MainNavigator() {
           name="MyCourses"
           component={MyCoursesNavigation}
           options={{ title: 'دوراتي' }}
+        />
+        <Drawer.Screen
+          name="ChangePassword"
+          component={ChangePasswordScreen}
+          options={{ title: 'تغيير كلمة المرور' }}
         />
         <Drawer.Screen name="About Us" component={AboutUsScreen} options={{ title: 'نبذة عنا' }} />
         <Drawer.Screen

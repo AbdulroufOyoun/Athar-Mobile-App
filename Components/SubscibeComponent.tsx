@@ -47,6 +47,12 @@ export default function SubscribeComponent({ updateSubscriptionStatus, route }: 
               />
             </View>
             <>
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
+                <Text style={{ fontSize: 15, padding: 15, textAlign: 'right', color: 'red' }}>
+                  (الكورس يُقدَّم لمرة واحدة فقط، وفي حال عدم اجتيازه، يتطلب التسجيل من جديد بالرسوم
+                  كاملة )
+                </Text>
+              </View>
               {error ? (
                 <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
                   <Text style={{ fontSize: 20, color: 'red' }}>كود التفعيل خطأ</Text>

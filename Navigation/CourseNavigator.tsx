@@ -11,6 +11,7 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -84,12 +85,13 @@ export default function CourseNavigator() {
         <View style={styles.overlay}>
           <View>
             <View style={styles.background}>
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={{ flexDirection: 'row' }}>
-                <Feather name="chevron-left" size={28} color="white" />
-                <Text style={{ fontSize: 20, color: 'white' }}> رجوع </Text>
-              </TouchableOpacity>
+              <TouchableWithoutFeedback onPress={() => navigation.goBack()} style={{ height: 60 }}>
+                <View style={{ flexDirection: 'row', height: 60 }}>
+                  <Feather name="chevron-left" size={28} color="white" />
+                  <Text style={{ fontSize: 20, color: 'white' }}> رجوع </Text>
+                </View>
+              </TouchableWithoutFeedback>
+
               <View
                 style={{
                   flex: 1,
